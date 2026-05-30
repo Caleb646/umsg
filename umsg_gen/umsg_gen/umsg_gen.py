@@ -35,10 +35,6 @@ def main():
         exit(1)
 
     # generate source and header files for each topic json file
-
-    # delete output directory if it exists
-    if output_path.exists():
-        shutil.rmtree(output_path)
     sources = []
     for file in files:
         # load topic json file
@@ -49,14 +45,14 @@ def main():
         topic_dict['name'] = Path(file).stem
 
         # generate header
-        filename = f'{output_path}/inc/umsg_{topic_dict["name"]}.h'
+        filename = f'{output_path}/umsg_{topic_dict["name"]}.h'
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
         content = inc_template.render(topic_dict=topic_dict,date=datetime.date.today())
         with open(filename, mode="w", encoding="utf-8") as message:
             message.write(content)
 
         #generate source
-        filename = f'{output_path}/src/{topic_dict["name"]}.c'
+        filename = f'{output_path}/{topic_dict["name"]}.c'
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
         content = src_template.render(topic_dict=topic_dict, date=datetime.date.today())
         with open(filename, mode="w", encoding="utf-8") as message:
@@ -64,15 +60,6 @@ def main():
 
         # add file name to list
         sources.append(Path(filename).name)
-
-    # Gereate cmake file
-    content = cmake_template.render(sources=sources, date=datetime.date.today())
-    filename = f'{output_path}/CMakeLists.txt'
-    with open(filename, mode="w", encoding="utf-8") as message:
-        message.write(content)
-
-    # copy core library to output using shutil
-    shutil.copytree(core_path, output_path / 'core')
 
 if __name__ == "__main__":
     main()
