@@ -4,14 +4,11 @@
 
 #include <umsg.h>
 #include <umsg_port.h>
-#include <string.h>
 
 umsg_sub_handle_t umsg_subscribe(umsg_msg_metadata_t* msg, uint16_t prescaler, uint32_t size, uint8_t length, uint8_t ch_id)
 {
     if(msg->sub_list == NULL)
     {
-        msg->msg_value = umsg_port_malloc(size);
-
         msg->sub_list = umsg_port_malloc(sizeof(umsg_sub_t));
         msg->sub_list->sub_handle = umsg_port_create(size,length);
         msg->sub_list->prescaler = prescaler;
@@ -40,7 +37,6 @@ umsg_sub_handle_t umsg_subscribe(umsg_msg_metadata_t* msg, uint16_t prescaler, u
 
 void umsg_publish(umsg_msg_metadata_t* msg, void* data, uint8_t ch_id)
 {
-    msg->msg_value = data;
     msg->counter++;
     umsg_sub_t* sub = msg->sub_list;
     while(sub != NULL)
@@ -56,14 +52,4 @@ void umsg_publish(umsg_msg_metadata_t* msg, void* data, uint8_t ch_id)
 uint8_t umsg_receive(umsg_sub_handle_t queue, void* data, uint32_t timeout)
 {
     return umsg_port_receive(queue, data, timeout);
-}
-
-uint8_t umsg_peek(umsg_msg_metadata_t* msg, void* data, uint32_t size)
-{
-    if(msg->counter > 0)
-    {
-        memcpy(data, msg->msg_value, size);
-        return 1;
-    }
-    return 0;
 }

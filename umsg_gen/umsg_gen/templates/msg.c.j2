@@ -32,9 +32,4 @@ uint8_t umsg_{{prefix}}_receive(umsg_sub_handle_t queue, umsg_{{prefix}}_t* data
 {
     return umsg_receive(queue, data, timeout);
 }
-uint8_t umsg_{{prefix}}_peek(umsg_{{prefix}}_t* data)
-{
-    return umsg_peek(&msg_{{prefix}}, data, sizeof(umsg_{{prefix}}_t));
-}
-
 {% endfor %}

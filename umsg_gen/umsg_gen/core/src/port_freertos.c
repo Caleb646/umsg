@@ -6,17 +6,10 @@
 #include <queue.h>
 #include <stdint.h>
 
-// obtained from cmsis core.h. All cortex M processors have this register at this address
-const uint32_t* ARM_CORTEX_ICSR = (uint32_t*)(0xE000E000UL+0x0D00UL+0x004);
-const uint32_t SCB_ICSR_VECTACTIVE_POS = 0x1FFUL;
 
 bool is_isr_active()
 {
-#if defined(__GNUC__) && defined(__arm__)
-    // if the current active vector is 0, then we are not in an ISR
-    return (*ARM_CORTEX_ICSR & SCB_ICSR_VECTACTIVE_POS) != 0;
-#endif
-    return false;
+    return xPortIsInsideInterrupt() == pdTRUE;
 }
 
 void * umsg_port_malloc(uint32_t size)
