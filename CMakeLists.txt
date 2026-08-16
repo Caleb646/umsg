@@ -1,4 +1,28 @@
 cmake_minimum_required(VERSION 3.15)
+
+# This builds the standalone test suite ONLY. It is not what consumers use:
+# Flapjack compiles umsg_lib/core/src/{umsg,port_freertos}.c directly and never
+# adds this directory, so nothing here affects that build.
+#
+# The inputs this needs - tests/, msg_defs/ and the FreeRTOS-Kernel submodule -
+# were deliberately removed (4d93776 "Removed peek functionality and unneeded
+# folders files.", 3800750 "removed freertos submodule"). Without them CMake
+# used to fail deep inside add_subdirectory with an unhelpful message, and the
+# generator call below failed silently because execute_process ignores the exit
+# code unless asked not to. Say so up front instead.
+foreach(_umsg_required tests msg_defs FreeRTOS-Kernel)
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_umsg_required}")
+        list(APPEND _umsg_missing "${_umsg_required}")
+    endif()
+endforeach()
+if(_umsg_missing)
+    message(FATAL_ERROR
+        "umsg standalone test build is unavailable: missing ${_umsg_missing}. "
+        "These were removed from the repository; restore them to build the tests. "
+        "Consumers of the library are unaffected - compile umsg_lib/core/src/umsg.c "
+        "and a port (port_freertos.c or port_posix.c) directly.")
+endif()
+
 project(uMsgTest)
 
 # we'll be running tests
@@ -6,7 +30,8 @@ include(CTest)
 
 # generate umsg_lib directory
 execute_process(COMMAND python ./umsg_gen/umsg_gen/umsg_gen.py -d ./msg_defs -o ./umsg_lib
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                COMMAND_ERROR_IS_FATAL ANY)
 
 
 # configure FreeRTOS

@@ -34,6 +34,23 @@ Run:
 umsg-gen -d '\messages' -o '\umsg_lib'
 ```
 
+### The core library
+
+`umsg.c`, the ports and the `inc/` headers are **not** generated - they ship inside the
+generator package at `umsg_gen/umsg_gen/core/`, which is the single source of truth for them.
+Edit them there.
+
+`umsg_lib/core/` in this repository is a checked-in copy of exactly that, kept so consumers can
+compile the core without installing the generator. Refresh it rather than hand-editing both
+copies, which is how they drift apart:
+
+```
+python umsg_gen/umsg_gen/umsg_gen.py -d msg_defs -o umsg_lib --with-core
+```
+
+`--with-core` is opt-in because a project that already compiles the core from somewhere else
+does not want a second copy dropped into its generated message directory.
+
 ## Add to CMake Project
 
 The generated library contains a CMakeLists.txt. Select the port and add the library to your CMake project with:

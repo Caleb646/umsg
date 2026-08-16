@@ -3,18 +3,32 @@ import json
 import glob
 import argparse
 import datetime
+import shutil
 from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', dest='msgs_directory', required=True)
     parser.add_argument('-o', dest='output_directory', required=True)
+    parser.add_argument('--with-core', dest='with_core', action='store_true',
+                        help='also copy the umsg core (inc/, src/) into <output>/core. '
+                             'The copy in this package is the source of truth; use this '
+                             'to refresh a checked-in copy such as umsg_lib/core instead '
+                             'of hand-editing both and letting them drift.')
     args = parser.parse_args()
 
     # create full paths
     msg_def_path = Path().resolve() / args.msgs_directory
     output_path = Path().resolve() / args.output_directory
     templates_path = Path(__file__).resolve().parent / 'templates'
+    core_path = Path(__file__).resolve().parent / 'core'
+
+    # Off by default: consumers that already compile the core from elsewhere
+    # (Flapjack builds it straight out of umsg_lib/core) would otherwise get an
+    # unused second copy dropped into their generated message directory.
+    if args.with_core:
+        shutil.copytree(core_path, output_path / 'core', dirs_exist_ok=True)
+        print(f'copied core -> {output_path / "core"}')
 
     # setup jinja2 environment & templates
     env = Environment(loader=FileSystemLoader(templates_path))
