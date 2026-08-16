@@ -2,7 +2,6 @@ from jinja2 import Environment, FileSystemLoader
 import json
 import glob
 import argparse
-import datetime
 import shutil
 from pathlib import Path
 
@@ -59,14 +58,14 @@ def main():
         # generate header
         filename = f'{output_path}/umsg_{topic_dict["name"]}.h'
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
-        content = inc_template.render(topic_dict=topic_dict,date=datetime.date.today())
+        content = inc_template.render(topic_dict=topic_dict)
         with open(filename, mode="w", encoding="utf-8") as message:
             message.write(content)
 
         #generate source
         filename = f'{output_path}/{topic_dict["name"]}.c'
         Path(filename).parent.mkdir(parents=True, exist_ok=True)
-        content = src_template.render(topic_dict=topic_dict, date=datetime.date.today())
+        content = src_template.render(topic_dict=topic_dict)
         with open(filename, mode="w", encoding="utf-8") as message:
             message.write(content)
 
