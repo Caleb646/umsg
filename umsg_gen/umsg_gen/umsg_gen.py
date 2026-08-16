@@ -4,7 +4,6 @@ import glob
 import argparse
 import datetime
 from pathlib import Path
-import shutil
 
 def main():
     parser = argparse.ArgumentParser()
@@ -16,7 +15,6 @@ def main():
     msg_def_path = Path().resolve() / args.msgs_directory
     output_path = Path().resolve() / args.output_directory
     templates_path = Path(__file__).resolve().parent / 'templates'
-    core_path = Path(__file__).resolve().parent / 'core'
 
     # setup jinja2 environment & templates
     env = Environment(loader=FileSystemLoader(templates_path))

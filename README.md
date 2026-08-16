@@ -96,10 +96,6 @@ uint8_t umsg_sensors_imu_receive(umsg_sub_handle_t queue, umsg_sensors_imu_t* da
 
 Receive function used by subscribers. Timeout is given in [ms]. For infinite timeout use the RTOS defines, such as portMAX_DELAY
 
-```c
-uint8_t umsg_sensors_imu_peek(umsg_sensors_imu_t* data);
-```
-Reads the latest which were published, bypassing the queues. return 0 if no values were ever published.
 ### Multi-Channel API functions
 
 Both the subscribe and publish API functions have multi-channel variants, with the '_ch' suffix.

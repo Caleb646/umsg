@@ -68,20 +68,20 @@ def create_graph(source_directories, colors, output_directory):
     # list of nodes which contain links to other nodes
     active_nodes_names = []	
 
-    # create edges between nodes wich share a message, from 'publish' to 'receive' or 'peek'
+    # create edges between nodes wich share a message, from 'publish' to 'receive'
     for node in nodes_dict:
         for node2 in nodes_dict:
             if node != node2:
                 for api_call in nodes_dict[node]['api_calls']:
                     for api_call2 in nodes_dict[node2]['api_calls']:
                         if api_call['message'] == api_call2['message']:
-                            if api_call['api'] == 'publish' and (api_call2['api'] == 'receive' or api_call2['api'] == 'peek'):
+                            if api_call['api'] == 'publish' and api_call2['api'] == 'receive':
                                 # create edge label as topic.message
                                 edge_label = api_call['topic'] + '.' + api_call['message']
                                 
                                 # add edge to graph
-                                # if peek api, or receive with timeout parameter set to 0, then edge is dashed (async)
-                                if api_call2['api'] == 'peek' or (api_call2['api'] == 'receive' and api_call2['parameters'][2] == '0'):
+                                # receive with timeout parameter set to 0 is a non-blocking read: dashed (async)
+                                if api_call2['api'] == 'receive' and api_call2['parameters'][2] == '0':
                                     # add edge to graph with 'async' attribute
                                     graph.edge(node, node2, style='dashed', label=edge_label, link_type='async')
                                 else:

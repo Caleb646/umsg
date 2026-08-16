@@ -51,12 +51,6 @@ add_executable(test_message_types
 target_link_libraries(test_message_types uMsgLib freertos_kernel)
 add_test(NAME test_message_types COMMAND test_message_types)
 
-# test message peeking
-add_executable(test_peek
-        tests/freertos/test_peek.c)
-target_link_libraries(test_peek uMsgLib freertos_kernel)
-add_test(NAME test_peek COMMAND test_peek)
-
 # test subscribe prescaler
 add_executable(test_prescaler
         tests/freertos/test_prescaler.c)
